@@ -112,7 +112,7 @@
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute>
+                          <v-btn color="primary" elevation="1" absolute v-on:click="limpiarCamposTodo">
                             <v-icon>
                               mdi-reload
                             </v-icon>
@@ -158,7 +158,7 @@
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute>
+                          <v-btn color="primary" elevation="1" absolute v-on:click="limpiarCamposTodoReferencia">
                             <v-icon>
                               mdi-reload
                             </v-icon>
@@ -267,21 +267,21 @@
                           ></v-autocomplete>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute v-on:click="findAll">
+                          <v-btn color="primary" elevation="1" absolute v-on:click="getGarantiasRecupCliente">
                             <v-icon>
                               mdi-folder-search-outline
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute>
+                          <v-btn color="primary" elevation="1" absolute v-on:click="limpiarCamposRecuperadosPorCliente">
                             <v-icon>
                               mdi-reload
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="success" elevation="1" absolute>
+                          <v-btn color="success" elevation="1" absolute v-on:click="exportarExcelRecuperadosPorCliente">
                             <v-icon>
                               mdi-file-excel-outline
                             </v-icon>
@@ -290,69 +290,13 @@
                         </v-col>
                       </v-row>
                       <!--TABLA-->
-                      <div class="todoTable">
-                        <v-simple-table
-                          fixed-header
-                          height="100%"
-                        >
-                          <template v-slot:default>
-                            <thead>
-                            <tr>
-                              <th class="text-left">
-                                Sucursal
-                              </th>
-                              <th class="text-left">
-                                Fecha Aper
-                              </th>
-                              <th class="text-left">
-                                Fecha Rec
-                              </th>
-                              <th class="text-left">
-                                Clave
-                              </th>
-                              <th class="text-left">
-                                Cliente
-                              </th>
-                              <th class="text-left">
-                                Referencia
-                              </th>
-                              <th class="text-left">
-                                Saldo P/Nav
-                              </th>
-                              <th class="text-left">
-                                Saldo Dev/Nav
-                              </th>
-                              <th class="text-left">
-                                Saldo Financiado
-                              </th>
-                              <th class="text-left">
-                                Saldo Cliente
-                              </th>
-                              <th class="text-left">
-                                Fecha Dev
-                              </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr
-                              v-for="item in garantiasTodoRec"
-                              :key="item.id"
-                            >
-                              <td>{{ item.sucursal }}</td>
-                              <td>{{ item.fechaAper }}</td>
-                              <td>{{ item.fechaRec }}</td>
-                              <td>{{ item.clave }}</td>
-                              <td>{{ item.cliente }}</td>
-                              <td>{{ item.referencia }}</td>
-                              <td>{{ item.saldoPNav }}</td>
-                              <td>{{ item.saldoDevNav }}</td>
-                              <td>{{ item.saldoFinan }}</td>
-                              <td>{{ item.saldoCliente }}</td>
-                              <td>{{ item.fechaDev }}</td>
-                            </tr>
-                            </tbody>
-                          </template>
-                        </v-simple-table>
+                      <div class="todoTable" v-if="garantiasRecuperadas !== null">
+                        <v-data-table
+                          :headers="headersGarantiasRecup"
+                          :items="garantiasRecuperadas"
+                          :items-per-page="5"
+                          class="elevation-1"
+                        ></v-data-table>
                       </div>
                     </div>
                     <div v-else>
@@ -366,24 +310,25 @@
                         </v-col>
                         <v-col cols="12" md="2">
                           <v-text-field outlined dense hide-details
-                            label="Referencia"></v-text-field>
+                                        v-model="referenciaRec"
+                                        label="Referencia"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute v-on:click="findAll">
+                          <v-btn color="primary" elevation="1" absolute v-on:click="getGarantiasRecupReferencia">
                             <v-icon>
                               mdi-folder-search-outline
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute>
+                          <v-btn color="primary" elevation="1" absolute v-on:click="limpiarCamposRecuperadosPorReferencia">
                             <v-icon>
                               mdi-reload
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="success" elevation="1" absolute>
+                          <v-btn color="success" elevation="1" absolute v-on:click="exportarExcelRecuperadosPorReferencia">
                             <v-icon>
                               mdi-file-excel-outline
                             </v-icon>
@@ -391,78 +336,16 @@
                           </v-btn>
                         </v-col>
                       </v-row>
-                      <div class="todoTable">
-                        <v-simple-table
-                          fixed-header
-                          height="100%"
-                        >
-                          <template v-slot:default>
-                            <thead>
-                            <tr>
-                              <th class="text-left">
-                                Sucursal
-                              </th>
-                              <th class="text-left">
-                                Fecha Aper
-                              </th>
-                              <th class="text-left">
-                                Fecha Rec
-                              </th>
-                              <th class="text-left">
-                                Clave
-                              </th>
-                              <th class="text-left">
-                                Cliente
-                              </th>
-                              <th class="text-left">
-                                Referencia
-                              </th>
-                              <th class="text-left">
-                                Saldo P/Nav
-                              </th>
-                              <th class="text-left">
-                                Saldo Dev/Nav
-                              </th>
-                              <th class="text-left">
-                                Saldo Financiado
-                              </th>
-                              <th class="text-left">
-                                Saldo Cliente
-                              </th>
-                              <th class="text-left">
-                                Fecha Dev
-                              </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr
-                              v-for="item in garantiasPorReferenciaRec"
-                              :key="item.id"
-                            >
-                              <td>{{ item.sucursal }}</td>
-                              <td>{{ item.fechaAper }}</td>
-                              <td>{{ item.fechaRec }}</td>
-                              <td>{{ item.clave }}</td>
-                              <td>{{ item.cliente }}</td>
-                              <td>{{ item.referencia }}</td>
-                              <td>{{ item.saldoPNav }}</td>
-                              <td>{{ item.saldoDevNav }}</td>
-                              <td>{{ item.saldoFinan }}</td>
-                              <td>{{ item.saldoCliente }}</td>
-                              <td>{{ item.fechaDev }}</td>
-                            </tr>
-                            </tbody>
-                          </template>
-                        </v-simple-table>
+                      <div class="todoTable" v-if="garantiasPorReferenciaRec !== null">
+                        <v-data-table
+                          :headers="headersGarantiasRecup"
+                          :items="garantiasPorReferenciaRec"
+                          :items-per-page="5"
+                          class="elevation-1"
+                        ></v-data-table>
                       </div>
                     </div>
                   </v-container>
-                </v-card-text>
-              </v-card>
-              <v-card>
-                <v-card-text>
-                  {{ recFechaInicio }} / {{ recFechaFin }}
-                  {{ razonSocialRec }}
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -547,21 +430,21 @@
                           ></v-autocomplete>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute v-on:click="findAll">
+                          <v-btn color="primary" elevation="1" absolute v-on:click="getGarantiasNoRecupCliente">
                             <v-icon>
                               mdi-folder-search-outline
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute>
+                          <v-btn color="primary" elevation="1" absolute v-on:click="limpiarCamposNoRacuperadosPorCliente">
                             <v-icon>
                               mdi-reload
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="success" elevation="1" absolute>
+                          <v-btn color="success" elevation="1" absolute v-on:click="exportarExcelNoRecuperadosPorCliente">
                             <v-icon>
                               mdi-file-excel-outline
                             </v-icon>
@@ -569,57 +452,13 @@
                           </v-btn>
                         </v-col>
                       </v-row>
-                      <div class="todoTable">
-                        <v-simple-table
-                          fixed-header
-                          height="100%"
-                        >
-                          <template v-slot:default>
-                            <thead>
-                            <tr>
-                              <th class="text-left">
-                                Sucursal
-                              </th>
-                              <th class="text-left">
-                                Fecha Aper
-                              </th>
-                              <th class="text-left">
-                                Clave
-                              </th>
-                              <th class="text-left">
-                                Cliente
-                              </th>
-                              <th class="text-left">
-                                Referencia
-                              </th>
-                              <th class="text-left">
-                                Saldo P/Nav
-                              </th>
-                              <th class="text-left">
-                                Saldo Financiado
-                              </th>
-                              <th class="text-left">
-                                Saldo Cliente
-                              </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr
-                              v-for="item in garantiasTodoNoRec"
-                              :key="item.id"
-                            >
-                              <td>{{ item.sucursal }}</td>
-                              <td>{{ item.fechaAper }}</td>
-                              <td>{{ item.clave }}</td>
-                              <td>{{ item.cliente }}</td>
-                              <td>{{ item.referencia }}</td>
-                              <td>{{ item.saldoPNav }}</td>
-                              <td>{{ item.saldoFinan }}</td>
-                              <td>{{ item.saldoCliente }}</td>
-                            </tr>
-                            </tbody>
-                          </template>
-                        </v-simple-table>
+                      <div class="todoTable" v-if="garantiasNoRecuperadas !== null">
+                        <v-data-table
+                          :headers="headersGarantiasNoRec"
+                          :items="garantiasNoRecuperadas"
+                          :items-per-page="5"
+                          class="elevation-1"
+                        ></v-data-table>
                       </div>
                     </div>
                     <div v-else>
@@ -633,24 +472,25 @@
                         </v-col>
                         <v-col cols="12" md="2">
                           <v-text-field outlined dense hide-details
-                            label="Referencia"></v-text-field>
+                                        v-model="referenciaNoRec"
+                                        label="Referencia"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute v-on:click="findAll">
+                          <v-btn color="primary" elevation="1" absolute v-on:click="getGarantiasNoRecupReferencia">
                             <v-icon>
                               mdi-folder-search-outline
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="primary" elevation="1" absolute>
+                          <v-btn color="primary" elevation="1" absolute v-on:click="limpiarCamposNoRecuperadosPorReferencia">
                             <v-icon>
                               mdi-reload
                             </v-icon>
                           </v-btn>
                         </v-col>
                         <v-col cols="12" md="1">
-                          <v-btn color="success" elevation="1" absolute>
+                          <v-btn color="success" elevation="1" absolute v-on:click="exportarExcelNoRecuperadosPorReferencia">
                             <v-icon>
                               mdi-file-excel-outline
                             </v-icon>
@@ -658,66 +498,16 @@
                           </v-btn>
                         </v-col>
                       </v-row>
-                      <div class="todoTable">
-                        <v-simple-table
-                          fixed-header
-                          height="100%"
-                        >
-                          <template v-slot:default>
-                            <thead>
-                            <tr>
-                              <th class="text-left">
-                                Sucursal
-                              </th>
-                              <th class="text-left">
-                                Fecha Aper
-                              </th>
-                              <th class="text-left">
-                                Clave
-                              </th>
-                              <th class="text-left">
-                                Cliente
-                              </th>
-                              <th class="text-left">
-                                Referencia
-                              </th>
-                              <th class="text-left">
-                                Saldo P/Nav
-                              </th>
-                              <th class="text-left">
-                                Saldo Financiado
-                              </th>
-                              <th class="text-left">
-                                Saldo Cliente
-                              </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr
-                              v-for="item in garantiasPorReferenciaNoRec"
-                              :key="item.id"
-                            >
-                              <td>{{ item.sucursal }}</td>
-                              <td>{{ item.fechaAper }}</td>
-                              <td>{{ item.clave }}</td>
-                              <td>{{ item.cliente }}</td>
-                              <td>{{ item.referencia }}</td>
-                              <td>{{ item.saldoPNav }}</td>
-                              <td>{{ item.saldoFinan }}</td>
-                              <td>{{ item.saldoCliente }}</td>
-                            </tr>
-                            </tbody>
-                          </template>
-                        </v-simple-table>
+                      <div class="todoTable" v-if="garantiasPorReferenciaNoRec !== null">
+                        <v-data-table
+                          :headers="headersGarantiasNoRec"
+                          :items="garantiasPorReferenciaNoRec"
+                          :items-per-page="5"
+                          class="elevation-1"
+                        ></v-data-table>
                       </div>
                     </div>
                   </v-container>
-                </v-card-text>
-              </v-card>
-              <v-card>
-                <v-card-text>
-                  {{ noRecFechaInicio }} / {{ noRecFechaFin }}
-                  {{ razonSocialNoRec }}
                 </v-card-text>
               </v-card>
             </v-tab-item>
@@ -812,7 +602,7 @@ export default {
         value: 's_SaldoDevPorNavi'
       },
       {
-        text: 'Saldo financiado',
+        text: 'Saldo Financiado',
         value: 'm_SaldoFinanciado'
       },
       {
@@ -830,12 +620,96 @@ export default {
     ],
     garantiasTodo: null,
     garantiasPorReferencia: null,
-    headersGarantiasRecup: [],
-    garantiasTodoRec: [],
-    garantiasPorReferenciaRec: [],
-    headersGarantiasNoRec: [],
-    garantiasTodoNoRec: [],
-    garantiasPorReferenciaNoRec: []
+    headersGarantiasRecup: [
+      {
+        text: 'Sucursal',
+        align: 'start',
+        sortable: false,
+        value: 's_Sucursal'
+      },
+      {
+        text: 'Fecha Aper',
+        value: 's_FechaAperturaReferencia'
+      },
+      {
+        text: 'Fecha Rec',
+        value: 's_FechaRecuperacionGarantia'
+      },
+      {
+        text: 'Clave',
+        sortable: false,
+        value: 's_Clave'
+      },
+      {
+        text: 'Cliente',
+        sortable: false,
+        value: 's_Cliente'
+      },
+      {
+        text: 'Referencia',
+        value: 's_Referencia'
+      },
+      {
+        text: 'Saldo P/Nav',
+        value: 's_SaldoPagANavi'
+      },
+      {
+        text: 'Saldo Dev/Nav',
+        value: 's_SaldoDevPorNavi'
+      },
+      {
+        text: 'Saldo Financiado',
+        value: 'm_SaldoFinanciado'
+      },
+      {
+        text: 'Saldo Cliente',
+        value: 'm_SaldoCliente'
+      },
+      {
+        text: 'Fecha Dev',
+        value: 's_FechaDev'
+      }
+    ],
+    garantiasRecuperadas: null,
+    garantiasPorReferenciaRec: null,
+    headersGarantiasNoRec: [
+      {
+        text: 'Sucursal',
+        align: 'start',
+        sortable: false,
+        value: 's_Sucursal'
+      },
+      {
+        text: 'Fecha Aper',
+        value: 's_FechaAperturaReferencia'
+      },
+      {
+        text: 'Clave',
+        value: 's_Clave'
+      },
+      {
+        text: 'Cliente',
+        value: 's_Cliente'
+      },
+      {
+        text: 'Referencia',
+        value: 's_Referencia'
+      },
+      {
+        text: 'Saldo P/Nav',
+        value: 's_SaldoPagANavi'
+      },
+      {
+        text: 'Saldo Financiado',
+        value: 'm_SaldoFinanciado'
+      },
+      {
+        text: 'Saldo Cliente',
+        value: 'm_SaldoCliente'
+      }
+    ],
+    garantiasNoRecuperadas: null,
+    garantiasPorReferenciaNoRec: null
   }),
   watch: {
     menu (val) {
@@ -864,9 +738,6 @@ export default {
     saveFechaFinNoRec (date) {
       this.$refs.noRecMenuFechaFin.save(date)
     },
-    findAll () {
-      console.log(this.dateFechaInicio + ' / ' + this.dateFechaFin)
-    },
     async getClientes () {
       await this.$axios.get(`${this.$service}devolucion_garantias/api/clientes`)
         .then(res => {
@@ -876,17 +747,71 @@ export default {
           })
         })
     },
-    async getGarantiasTodo () {
-      await this.$axios.get(`${this.$service}devolucion_garantias/api/todo/cliente/${this.razonSocialTodo.nIdClie07}/${this.dateFechaInicio}/${this.dateFechaFin}`)
+    getGarantiasTodo () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/todo/cliente/${this.razonSocialTodo.nIdClie07}/${this.dateFechaInicio}/${this.dateFechaFin}`)
         .then(res => {
           this.garantiasTodo = res.data.data
         })
     },
-    async getGarantiasTodoPorReferencia () {
-      await this.$axios.get(`${this.$service}devolucion_garantias/api/todo/referencia/${this.referenciaTodo}`)
+    getGarantiasTodoPorReferencia () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/todo/referencia/${this.referenciaTodo}`)
         .then(res => {
           this.garantiasPorReferencia = res.data.data
         })
+    },
+    getGarantiasRecupCliente () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/recuperados/cliente/${this.razonSocialRec.nIdClie07}/${this.recFechaInicio}/${this.recFechaFin}`)
+        .then(res => {
+          this.garantiasRecuperadas = res.data.data
+        })
+    },
+    getGarantiasRecupReferencia () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/recuperados/referencia/${this.referenciaRec}`)
+        .then(res => {
+          this.garantiasPorReferenciaRec = res.data.data
+        })
+    },
+    getGarantiasNoRecupCliente () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/no_recuperados/cliente/${this.razonSocialNoRec.nIdClie07}/${this.noRecFechaInicio}/${this.noRecFechaFin}`)
+        .then(res => {
+          this.garantiasNoRecuperadas = res.data.data
+        })
+    },
+    getGarantiasNoRecupReferencia () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/no_recuperados/referencia/${this.referenciaNoRec}`)
+        .then(res => {
+          this.garantiasPorReferenciaNoRec = res.data.data
+        })
+    },
+    limpiarCamposTodo () {
+      this.dateFechaInicio = ''
+      this.dateFechaFin = ''
+      this.razonSocialTodo = ''
+      this.garantiasTodo = null
+    },
+    limpiarCamposTodoReferencia () {
+      this.referenciaTodo = ''
+      this.garantiasPorReferencia = null
+    },
+    limpiarCamposRecuperadosPorCliente () {
+      this.recFechaInicio = ''
+      this.recFechaFin = ''
+      this.razonSocialRec = ''
+      this.garantiasRecuperadas = null
+    },
+    limpiarCamposRecuperadosPorReferencia () {
+      this.referenciaRec = ''
+      this.garantiasPorReferenciaRec = null
+    },
+    limpiarCamposNoRacuperadosPorCliente () {
+      this.noRecFechaInicio = ''
+      this.noRecFechaFin = ''
+      this.razonSocialNoRec = ''
+      this.garantiasNoRecuperadas = null
+    },
+    limpiarCamposNoRecuperadosPorReferencia () {
+      this.referenciaNoRec = ''
+      this.garantiasPorReferenciaNoRec = null
     },
     exportarExcelTodoPorClie () {
       this.$axios.get(`${this.$service}devolucion_garantias/api/export/excel/todo/cliente/${this.razonSocialTodo.nIdClie07}/${this.dateFechaInicio}/${this.dateFechaFin}`)
@@ -898,6 +823,38 @@ export default {
     },
     exportarExcelTodoPorReferencia () {
       this.$axios.get(`${this.$service}devolucion_garantias/api/export/excel/todo/referencia/${this.referenciaTodo}`)
+        .then(res => {
+          if (res.data.result === true) {
+            this.$goToUrl(res.data.data)
+          }
+        })
+    },
+    exportarExcelRecuperadosPorCliente () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/export/excel/recuperados/cliente/${this.razonSocialRec.nIdClie07}/${this.recFechaInicio}/${this.recFechaFin}`)
+        .then(res => {
+          if (res.data.result === true) {
+            this.$goToUrl(res.data.data)
+          }
+        })
+    },
+    exportarExcelRecuperadosPorReferencia () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/export/excel/recuperados/referencia/${this.referenciaRec}`)
+        .then(res => {
+          if (res.data.result === true) {
+            this.$goToUrl(res.data.data)
+          }
+        })
+    },
+    exportarExcelNoRecuperadosPorCliente () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/export/excel/no_recuperados/cliente/${this.razonSocialNoRec.nIdClie07}/${this.noRecFechaInicio}/${this.noRecFechaFin}`)
+        .then(res => {
+          if (res.data.result === true) {
+            this.$goToUrl(res.data.data)
+          }
+        })
+    },
+    exportarExcelNoRecuperadosPorReferencia () {
+      this.$axios.get(`${this.$service}devolucion_garantias/api/export/excel/no_recuperados/referencia/${this.referenciaNoRec}`)
         .then(res => {
           if (res.data.result === true) {
             this.$goToUrl(res.data.data)
